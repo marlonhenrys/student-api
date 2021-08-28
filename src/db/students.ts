@@ -25,6 +25,27 @@ function addStudent(student: Student) {
 }
 
 /**
+ * Update an existing student
+ * @param id Student ID
+ * @param student Student data
+ * @returns Student updated
+ */
+ function updateStudent(id: Number, student: Student) {
+  const studentExists = students.findIndex(student => student.id === id)
+
+  if(!studentExists){
+    return Promise.reject(new Error('Student not found'))
+  }
+
+  const newStudent = {
+    id: students.length ? students[students.length - 1].id! + 1 : 1,
+    ...student,
+  };
+  students.push(Object.freeze(newStudent));
+  return Promise.resolve(newStudent);
+}
+
+/**
  * Returns student list
  * @returns Students
  */
