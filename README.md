@@ -2,6 +2,8 @@
 
 Esse é o código atualizado para a Students API.
 
+**Grupo 6 (Bruno, Marlon, Otávio)**
+
 ## Tecnologias
 
 API escrita em Typescript, utilizando o framework ExpressJS para implementação de rotas e a biblioteca Celebrate para validação de dados.
