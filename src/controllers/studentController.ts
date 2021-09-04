@@ -16,8 +16,13 @@ export class StudentsController {
   }
 
   async update(req: Request, res: Response) {
-    const newStudent = await StudentsDB.addStudent(req.body);
+    try {
+      const studentId = parseInt(req.params.id)
+      const studentData = await StudentsDB.updateStudent(studentId, req.body);
 
-    return res.status(StatusCodes.CREATED).json(newStudent);
+      return res.status(StatusCodes.CREATED).json(studentData);
+    } catch (error: any) {
+      return res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 }

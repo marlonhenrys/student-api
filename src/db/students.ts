@@ -1,3 +1,5 @@
+import { StatusCodes } from "http-status-codes";
+import { HttpError } from "../helpers/errors";
 import { Student } from "../types/Student";
 
 const students: Student[] = [
@@ -30,19 +32,19 @@ function addStudent(student: Student) {
  * @param student Student data
  * @returns Student updated
  */
- function updateStudent(id: Number, student: Student) {
-  const studentExists = students.findIndex(student => student.id === id)
+function updateStudent(id: Number, student: Student) {
+  const studentIndex = students.findIndex(student => student.id === id);
 
-  if(!studentExists){
-    return Promise.reject(new Error('Student not found'))
+  if (studentIndex === -1) {
+    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
   }
 
-  const newStudent = {
-    id: students.length ? students[students.length - 1].id! + 1 : 1,
-    ...student,
-  };
-  students.push(Object.freeze(newStudent));
-  return Promise.resolve(newStudent);
+  students[studentIndex] = Object.freeze({
+    ...students[studentIndex],
+    ...student
+  });
+
+  return Promise.resolve(students[studentIndex]);
 }
 
 /**
@@ -51,4 +53,4 @@ function addStudent(student: Student) {
  */
 const getStudents = () => Promise.resolve(Object.freeze([...students]));
 
-export { addStudent, getStudents };
+export { addStudent, updateStudent, getStudents };
