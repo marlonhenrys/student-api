@@ -63,4 +63,12 @@ describe("Test student requests", () => {
       .send(updatedStudent)
       .then((res) => expect(res.body).toMatchObject({ id: 1, ...updatedStudent }));
   });
+
+  it("should delete a existing student", async () => {
+    await supertest(app)
+      .delete("/students/1")
+      .then((res) => {
+        expect(res.status).toBe(204);
+        });
+  });
 });

@@ -20,6 +20,7 @@ routes.put(
   celebrate({ body: Joi.object().keys(StudentSchema) }),
   studentsController.update
 );
+routes.delete("/students/:id", studentsController.delete)
 //? Why not add an update, delete and get one routes/
 
 export default routes;

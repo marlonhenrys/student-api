@@ -48,9 +48,27 @@ function updateStudent(id: Number, student: Student) {
 }
 
 /**
+ * Delete an existing student
+ * @param id Student ID
+ * @returns Student 
+ */
+
+function deleteStudent(id: Number) {
+  const studentIndex = students.findIndex(student => student.id === id);
+
+  if (studentIndex === -1) {
+    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
+
+  }
+  students.splice(studentIndex, 1);
+
+  return Promise.resolve({message: `Student #${id} is deleted.`});
+}
+
+/**
  * Returns student list
  * @returns Students
  */
 const getStudents = () => Promise.resolve(Object.freeze([...students]));
 
-export { addStudent, updateStudent, getStudents };
+export { addStudent, updateStudent, getStudents, deleteStudent };

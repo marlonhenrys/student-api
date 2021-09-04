@@ -25,4 +25,15 @@ export class StudentsController {
       return res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const studentId = parseInt(req.params.id)
+      const result = await StudentsDB.deleteStudent(studentId);
+
+      return res.status(StatusCodes.NO_CONTENT).json(result);
+    } catch (error: any) {
+      return res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  }
 }
