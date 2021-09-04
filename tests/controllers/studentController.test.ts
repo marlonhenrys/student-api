@@ -33,7 +33,7 @@ describe("Test student requests", () => {
       .then((res) => expect(res.body).toMatchObject({ id: 2, ...newStudent }));
   });
 
-  it("should return a 404 error - not found", async () => {
+  it("should return a 404 error - not found - update", async () => {
     const updatedStudent = {
       name: "John Doe 3",
       email: "john.doe.3@example.com",
@@ -67,8 +67,15 @@ describe("Test student requests", () => {
   it("should delete a existing student", async () => {
     await supertest(app)
       .delete("/students/1")
+      .then((res) => expect(res.status).toBe(204));
+  });
+
+  it("should return a 404 error - not found - delete", async () => {
+    await supertest(app)
+      .delete("/students/10")
       .then((res) => {
-        expect(res.status).toBe(204);
-        });
+        expect(res.status).toBe(404);
+        expect(res.body).toMatchObject({ message: "student-not-found"});
+      });
   });
 });

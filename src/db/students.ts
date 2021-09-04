@@ -62,7 +62,7 @@ function deleteStudent(id: Number) {
   }
   students.splice(studentIndex, 1);
 
-  return Promise.resolve({message: `Student #${id} is deleted.`});
+  return Promise.resolve();
 }
 
 /**
