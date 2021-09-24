@@ -64,6 +64,54 @@ describe("Test student requests", () => {
       .then((res) => expect(res.body).toMatchObject({ id: 1, ...updatedStudent }));
   });
 
+  it("should return HTTP error for new student with empty data", async () => {
+    await supertest(app)
+      .post("/students")
+      .then((res) => {
+        expect(res.status).toBe(500);
+      });
+  });
+
+  it("should return HTTP error for new student with invalid email", async () => {
+    const newStudent = {
+      name: "John Doe 5",
+      email: "john.doe.5",
+      city: "Belo Horizonte",
+      birth: new Date("11/13/1999").toISOString(),
+    };
+
+    await supertest(app)
+      .post("/students")
+      .send(newStudent)
+      .then((res) => {
+        expect(res.status).toBe(500);
+      });
+  });
+
+  it("should return HTTP error for updating student with empty data", async () => {
+    await supertest(app)
+    .put("/students/1")
+    .then((res) => {
+      expect(res.status).toBe(500);
+    });
+  });
+
+  it("should return HTTP error for updating student with invalid email", async () => {
+    const newStudent = {
+      name: "John Doe 6",
+      email: "john.doe.6",
+      city: "Belo Horizonte",
+      birth: new Date("11/13/1999").toISOString(),
+    };
+
+    await supertest(app)
+      .put("/students/1")
+      .send(newStudent)
+      .then((res) => {
+        expect(res.status).toBe(500);
+      });
+  });
+
   it("should delete a existing student", async () => {
     await supertest(app)
       .delete("/students/1")
@@ -78,4 +126,5 @@ describe("Test student requests", () => {
         expect(res.body).toMatchObject({ message: "student-not-found"});
       });
   });
+
 });
