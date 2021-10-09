@@ -1,32 +1,26 @@
-name: New Students Api Pipeline
+name: New Students API Pipeline
 
 on:
   push:
     branches:
       - main
 
+env:
+  NODE_ENV: ${{secrets.NODE_ENV}}
+  PORT: ${{secrets.PORT}}
+
 jobs:
   build:
     name: "Build and Test"
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: ${{secrets.NODE_ENV}}
-      PORT: ${{secrets.PORT}}
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x]
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Install dependencies
-      run: npm install
-    - name: Run tests
-      run: npm run test
-    - name: Run build
-      run: npm run build
-    - name: List directory
-      run: ls dist
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run test
+      - name: Run build
+        run: npm run build
+      - name: List directory
+        run: ls dist
