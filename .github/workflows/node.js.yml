@@ -1,17 +1,17 @@
-name: Node.js CI
+name: New Students Api Pipeline
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
+    name: "Build and Test"
     runs-on: ubuntu-latest
     env:
-        NODE_ENV: ${{secrets.NODE_ENV}}
-        PORT: ${{secrets.PORT}}
+      NODE_ENV: ${{secrets.NODE_ENV}}
+      PORT: ${{secrets.PORT}}
     strategy:
       matrix:
         node-version: [12.x, 14.x]
@@ -22,7 +22,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm install
-      - run: npm run test
-      - run: npm run build
-      - run: ls dist
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run test
+      - name: Run build
+        run: npm run build
+      - name: List directory
+        run: ls dist
