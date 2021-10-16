@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../helpers/errors";
-import { Student } from "../types/Student";
+import { Student } from "../entities/Student";
+import { getConnection } from "typeorm";
 
 const students: Student[] = [
   {
@@ -17,13 +18,13 @@ const students: Student[] = [
  * @param student New student
  * @returns new student
  */
-function addStudent(student: Student) {
-  const newStudent = {
-    id: students.length ? students[students.length - 1].id! + 1 : 1,
-    ...student,
-  };
-  students.push(Object.freeze(newStudent));
-  return Promise.resolve(newStudent);
+async function addStudent(student: Student) {
+  const newStudent = new Student(student);
+  const connection = await getConnection().getRepository(Student);
+
+  await connection.save(newStudent);
+
+  return newStudent;
 }
 
 /**
@@ -69,6 +70,6 @@ function deleteStudent(id: Number) {
  * Returns student list
  * @returns Students
  */
-const getStudents = () => Promise.resolve(Object.freeze([...students]));
+const getStudents = () => getConnection().getRepository(Student).find()
 
 export { addStudent, updateStudent, getStudents, deleteStudent };
