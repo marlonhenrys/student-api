@@ -1,7 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../helpers/errors";
 import { Student } from "../entities/Student";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
+import { __assign } from "tslib";
 
 const students: Student[] = [
   {
@@ -33,19 +34,18 @@ async function addStudent(student: Student) {
  * @param student Student data
  * @returns Student updated
  */
-function updateStudent(id: Number, student: Student) {
-  const studentIndex = students.findIndex(student => student.id === id);
+async function updateStudent(id: number, student: Student) {
+  const studentRepository = getConnection().getRepository(Student)
+  const studentDB = await studentRepository.findOne(id)
 
-  if (studentIndex === -1) {
+  if (!studentDB) {
     return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
   }
 
-  students[studentIndex] = Object.freeze({
-    ...students[studentIndex],
-    ...student
-  });
+  Object.assign(studentDB, student)
+  await studentRepository.save(studentDB)
 
-  return Promise.resolve(students[studentIndex]);
+  return Promise.resolve(studentDB);
 }
 
 /**
