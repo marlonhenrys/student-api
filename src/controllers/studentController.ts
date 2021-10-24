@@ -20,7 +20,7 @@ export class StudentsController {
       const studentId = parseInt(req.params.id)
       const studentData = await StudentsDB.updateStudent(studentId, req.body);
 
-      return res.status(StatusCodes.CREATED).json(studentData);
+      return res.status(StatusCodes.OK).json(studentData);
     } catch (error: any) {
       return res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }

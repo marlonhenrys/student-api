@@ -1,29 +1,20 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../helpers/errors";
-import { Student } from "../types/Student";
-
-const students: Student[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    city: "Belo Horizonte",
-    birth: new Date("11/13/1999"),
-  },
-];
+import { Student } from "../entities/Student";
+import { getConnection } from "typeorm";
 
 /**
  * Add new student to list
  * @param student New student
  * @returns new student
  */
-function addStudent(student: Student) {
-  const newStudent = {
-    id: students.length ? students[students.length - 1].id! + 1 : 1,
-    ...student,
-  };
-  students.push(Object.freeze(newStudent));
-  return Promise.resolve(newStudent);
+async function addStudent(student: Student) {
+  const studentRepository = getConnection().getRepository(Student);
+  const newStudent = new Student(student);
+
+  await studentRepository.save(newStudent);
+
+  return newStudent;
 }
 
 /**
@@ -32,19 +23,18 @@ function addStudent(student: Student) {
  * @param student Student data
  * @returns Student updated
  */
-function updateStudent(id: Number, student: Student) {
-  const studentIndex = students.findIndex(student => student.id === id);
+async function updateStudent(id: number, student: Student) {
+  const studentRepository = getConnection().getRepository(Student);
+  const studentDB = await studentRepository.findOne(id);
 
-  if (studentIndex === -1) {
-    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
+  if (!studentDB) {
+    throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
   }
 
-  students[studentIndex] = Object.freeze({
-    ...students[studentIndex],
-    ...student
-  });
+  Object.assign(studentDB, student);
+  await studentRepository.save(studentDB);
 
-  return Promise.resolve(students[studentIndex]);
+  return studentDB;
 }
 
 /**
@@ -53,22 +43,21 @@ function updateStudent(id: Number, student: Student) {
  * @returns Student 
  */
 
-function deleteStudent(id: Number) {
-  const studentIndex = students.findIndex(student => student.id === id);
+async function deleteStudent(id: number) {
+  const studentRepository = getConnection().getRepository(Student);
+  const studentDB = await studentRepository.findOne(id);
 
-  if (studentIndex === -1) {
-    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
-
+  if (!studentDB) {
+    throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
   }
-  students.splice(studentIndex, 1);
 
-  return Promise.resolve();
+  studentRepository.remove(studentDB)
 }
 
 /**
  * Returns student list
  * @returns Students
  */
-const getStudents = () => Promise.resolve(Object.freeze([...students]));
+const getStudents = () => getConnection().getRepository(Student).find();
 
 export { addStudent, updateStudent, getStudents, deleteStudent };
