@@ -1,6 +1,24 @@
 import app from "..";
 import supertest from "supertest";
 
+jest.mock("../../src/db/students", () => {
+  const originalModule = jest.requireActual("../../src/db/students");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    addStudent: jest.fn(() => 
+      Promise.resolve({
+        id: 2,
+        name: "John Doe 2",
+        email: "john.doe.2@example.com",
+        city: "Belo Horizonte",
+        birth: new Date("22/01/1996").toISOString(),
+      })
+    )
+  }
+});
+
 describe("Test student requests", () => {
   it("should return the example student", async () => {
     await supertest(app)

@@ -54,14 +54,15 @@ async function updateStudent(id: number, student: Student) {
  * @returns Student 
  */
 
-function deleteStudent(id: Number) {
-  const studentIndex = students.findIndex(student => student.id === id);
+async function deleteStudent(id: number) {
+  const studentRepository = getConnection().getRepository(Student)
+  const studentDB = await studentRepository.findOne(id)
 
-  if (studentIndex === -1) {
+  if (!studentDB) {
     return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
-
   }
-  students.splice(studentIndex, 1);
+
+  await studentRepository.remove(studentDB);
 
   return Promise.resolve();
 }
