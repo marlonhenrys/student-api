@@ -1,18 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { HttpError } from "../helpers/errors";
 import { Student } from "../entities/Student";
-import { getConnection, getRepository } from "typeorm";
-import { __assign } from "tslib";
-
-const students: Student[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    city: "Belo Horizonte",
-    birth: new Date("11/13/1999"),
-  },
-];
+import { getConnection } from "typeorm";
 
 /**
  * Add new student to list
@@ -20,10 +9,10 @@ const students: Student[] = [
  * @returns new student
  */
 async function addStudent(student: Student) {
+  const studentRepository = getConnection().getRepository(Student);
   const newStudent = new Student(student);
-  const connection = await getConnection().getRepository(Student);
 
-  await connection.save(newStudent);
+  await studentRepository.save(newStudent);
 
   return newStudent;
 }
@@ -35,17 +24,17 @@ async function addStudent(student: Student) {
  * @returns Student updated
  */
 async function updateStudent(id: number, student: Student) {
-  const studentRepository = getConnection().getRepository(Student)
-  const studentDB = await studentRepository.findOne(id)
+  const studentRepository = getConnection().getRepository(Student);
+  const studentDB = await studentRepository.findOne(id);
 
   if (!studentDB) {
-    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
+    throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
   }
 
-  Object.assign(studentDB, student)
-  await studentRepository.save(studentDB)
+  Object.assign(studentDB, student);
+  await studentRepository.save(studentDB);
 
-  return Promise.resolve(studentDB);
+  return studentDB;
 }
 
 /**
@@ -54,22 +43,21 @@ async function updateStudent(id: number, student: Student) {
  * @returns Student 
  */
 
-function deleteStudent(id: Number) {
-  const studentIndex = students.findIndex(student => student.id === id);
+async function deleteStudent(id: number) {
+  const studentRepository = getConnection().getRepository(Student);
+  const studentDB = await studentRepository.findOne(id);
 
-  if (studentIndex === -1) {
-    return Promise.reject(new HttpError('student-not-found', StatusCodes.NOT_FOUND));
-
+  if (!studentDB) {
+    throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
   }
-  students.splice(studentIndex, 1);
 
-  return Promise.resolve();
+  studentRepository.delete(studentDB)
 }
 
 /**
  * Returns student list
  * @returns Students
  */
-const getStudents = () => getConnection().getRepository(Student).find()
+const getStudents = () => getConnection().getRepository(Student).find();
 
 export { addStudent, updateStudent, getStudents, deleteStudent };
