@@ -34,14 +34,14 @@ jest.mock("../../src/db/students", () => {
           birth: new Date("11/15/1999").toISOString(),
         })
       } else {
-        throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
+        throw new HttpError('student-not-found', StatusCodes.NOT_FOUND)
       }
     }),
     deleteStudent: jest.fn(id => {
-      if (id == 1) {
+      if (id === 1) {
         return Promise.resolve()
       } else {
-        throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
+        throw new HttpError('student-not-found', StatusCodes.NOT_FOUND)
       }
     })
   }
