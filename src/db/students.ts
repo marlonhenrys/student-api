@@ -51,7 +51,7 @@ async function deleteStudent(id: number) {
     throw new HttpError('student-not-found', StatusCodes.NOT_FOUND);
   }
 
-  studentRepository.delete(studentDB)
+  studentRepository.remove(studentDB)
 }
 
 /**
