@@ -10,5 +10,5 @@ const port = process.env.PORT;
 
 app.listen(port, async () => {
   await newConnection()
-  console.log(`This beautiful and updated server is running on port ${port}`)
+  console.log(`This server is running on port ${port}`)
 });
